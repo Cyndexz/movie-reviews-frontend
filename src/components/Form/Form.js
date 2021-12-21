@@ -37,7 +37,7 @@ const Form = ({currentId, setCurrentId}) => {
     return (
         <Paper className={classes.paper}>
             <form autoComplete='off' noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant='h6'>{currentId ? 'Editing' : 'Creating'} a Movie Review</Typography>
+                <Typography variant='h6'>{currentId ? 'Editing'`${post.title}` : 'Creating a Movie Review'} </Typography>
                 <TextField name="creator"  variant="outlined"  label="Creator"  fullWidth value ={postData.creator}  onChange={(e) => setPostData({...postData, creator: e.target.value})}/> {/** ..postData so it wont overwrite and keeps the rest of the data. Data will stay the same regardless of you only changing one thing*/}
                 <TextField name="title"  variant="outlined"  label="Movie Title"  fullWidth value ={postData.title}  onChange={(e) => setPostData({...postData, title: e.target.value})}/>
                 <TextField name="message"  variant="outlined"  label="Review"  fullWidth value ={postData.message}  onChange={(e) => setPostData({...postData, message: e.target.value})}/>
