@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {Card, CardActions, CardContent, CardMedia, Button, Typography} from '@material-ui/core';
+import React, {useEffect, useState} from 'react';
+import {Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase} from '@material-ui/core';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import ThumbUpAltOutlined from '@material-ui/icons/ThumbUpAltOutlined'
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -8,38 +8,56 @@ import moment from 'moment';
 import useStyles from './styles';
 import { useDispatch} from 'react-redux';
 import { deletePost, likePost } from '../../../actions/posts';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Post = ({post, setCurrentId}) => {
     const classes = useStyles ();
     const dispatch = useDispatch();
     const location = useLocation();
     const user = JSON.parse(localStorage.getItem('profile'));
+    const navigate = useNavigate();
+    const userId = (user?.result?.googleId || user?.result?._id)
+    const [likes, setLikes] = useState(post?.likes);
+    const hasLikedPost = post?.likes.find((like) => like === userId);
 
     useEffect(() => {}, [location]);            //Had to add this in order to remove this after the user has logged out
     
+    const handleLike = async () => {
+        dispatch(likePost(post._id));
+
+        if(hasLikedPost){
+            setLikes(post.likes.filter((id) => id !== userId));         //We filter out there specific like if they do not want to like the post anymore
+        } else {
+            setLikes([...post.likes, userId]);
+        }
+    };
+
     const Likes = () => {
-        if (post?.likes?.length > 0) {
-          return post?.likes.find((like) => like === (user?.result?.googleId || user?.result?._id))      //checking if a current person has liked the google id or the custom id
+        if (likes?.length > 0) {
+          return likes.find((like) => like === userId)      //checking if a current person has liked the google id or the custom id
             ? (
-              <><ThumbUpAltIcon fontSize="small" />&nbsp;{post?.likes?.length > 2 ? `You and ${post?.likes?.length - 1} others` : `${post?.likes?.length} like${post?.likes?.length > 1 ? 's' : ''}` }</>
+              <><ThumbUpAltIcon fontSize="small" />&nbsp;{likes?.length > 2 ? `You and ${likes?.length - 1} others` : `${likes?.length} like${likes?.length > 1 ? 's' : ''}` }</>
             ) : (
-              <><ThumbUpAltOutlined fontSize="small" />&nbsp;{post?.likes?.length} {post?.likes?.length === 1 ? 'Like' : 'Likes'}</>
+              <><ThumbUpAltOutlined fontSize="small" />&nbsp;{likes?.length} {likes?.length === 1 ? 'Like' : 'Likes'}</>
             );
         }
         return <><ThumbUpAltOutlined fontSize="small" />&nbsp;Like</>;
       };
 
+      const openPost= () => navigate(`/posts/${post._id}`);
+
     return (
-        <Card className={classes.card}>
+        <Card className={classes.card} raised elevation={6}>
+            <ButtonBase className={classes.cardAction} onClick={openPost}>
             <CardMedia className={classes.media} image={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png' } title={post.title}/>
             <div className={classes.overlay}>
                 <Typography variant ="h6"> {post.name} </Typography>
                 <Typography varient="body2"> {moment(post.createdAt).fromNow()} </Typography>
             </div>
+            </ButtonBase>
             {(user?.result?.googleId === post?.creator || user?.result?._id === post?.creator) && (
-            <div className={classes.overlay2}>
-                <Button style={{color:'white'}} size="small" onClick={() => setCurrentId(post._id)}> 
+            <div className={classes.overlay2} name="edit">
+                <Button style={{color:'white'}} size="small" onClick={(e) =>{ e.stopPropagation(); setCurrentId(post._id);}}> 
                     <MoreHorizIcon fontSize="medium"/>
                 </Button>
             </div>
@@ -52,11 +70,11 @@ const Post = ({post, setCurrentId}) => {
                 <Typography variant="body2" color="textSecondary" component="p"> {post.message}</Typography>
             </CardContent>
             <CardActions className={classes.cardActions}>
-                <Button size="small" color="primary" disabled={!user?.result} onClick={() => dispatch(likePost(post._id))}>
+                <Button size="small" color="primary" disabled={!user?.result} onClick={handleLike}>
                     <Likes/>
                 </Button>
                 {(user?.result?.googleId === post?.creator || user?.result?._id === post?.creator) && (
-                <Button size="small" color="primary" onClick={() => {dispatch(deletePost(post._id))}}>
+                <Button size="small" className={classes.button} onClick={() => {dispatch(deletePost(post._id))}}>
                     <DeleteIcon fontSize="small"/>
                     &nbsp; Delete
                 </Button>

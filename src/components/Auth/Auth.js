@@ -20,7 +20,6 @@ const Auth = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const classes = useStyles();
-   
     const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);  //This switches things on and off
     
     const switchMode = ()  => {
