@@ -17,11 +17,19 @@ const Form = ({currentId, setCurrentId}) => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    const clear = () =>{
+        setCurrentId(null);
+        setPostData({title: '', message: '', tags: [], selectedFile: '' });
+    };
+    
     useEffect(() => {                   //If the posts exists we will set our post data
-        if(!post?.title) clear();
+        if(!post?.title){
+            clear(); 
+        }
         if(post) setPostData(post);
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [post, location]);   //Added location and useLocation to form so that the form would not be available if the user is not logged in
+    
 
     const handleSubmit = async(e) => {
         e.preventDefault();         //not to get the refresh in the browser
@@ -32,11 +40,6 @@ const Form = ({currentId, setCurrentId}) => {
             dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));
         }
         clear();
-    };
-
-    const clear = () =>{
-        setCurrentId(null);
-        setPostData({title: '', message: '', tags: [], selectedFile: '' });
     };
 
 
