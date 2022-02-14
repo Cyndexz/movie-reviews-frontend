@@ -3,7 +3,7 @@ import axios from 'axios';  //used to make api calls
 //const url = 'https://movie-reviews-project.herokuapp.com/posts';      //url pointing to our backend always have http://172.29.174.112:3000/posts <--- /posts MUST be there for local
 
 //const API = axios.create({baseURL: 'http://localhost:5000'});
-const API = axios.create({baseURL: 'https://movie-reviews-project.herokuapp.com/'});
+const API = axios.create({baseURL: 'https://movie-reviews-project.herokuapp.com/posts'});
 
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')){
