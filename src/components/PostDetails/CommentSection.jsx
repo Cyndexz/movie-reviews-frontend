@@ -14,6 +14,7 @@ const CommentSection = ({post}) => {
 
 
     const handleClick = async () => {
+        commentsRef.current.scrollIntoView({behavior: 'smooth'});
         const finalComment = `${user?.result?.name}: ${comment}`;      //Who wrote the comment and the actual comment itself
         const newComments = await dispatch(commentPost(finalComment, post._id));
 

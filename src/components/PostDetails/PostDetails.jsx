@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import {Paper, Typography, CircularProgress, Divider} from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import {getPost, getPostsBySearch} from '../../actions/posts';
 import CommentSection from './CommentSection';
@@ -13,10 +13,12 @@ const PostDetails = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const {id} = useParams();
+    const location = useLocation();
+
 
     useEffect(() => {
         dispatch(getPost(id));
-    }, [dispatch, id]);
+    }, [dispatch, id, location]);
 
     useEffect(() => {
         if(post){
